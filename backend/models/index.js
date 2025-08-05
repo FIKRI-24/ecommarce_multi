@@ -16,16 +16,16 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-// Baca semua file model dalam folder ini
+
 fs.readdirSync(__dirname)
   .filter(file =>
-    file.indexOf('.') !== 0 &&        // bukan file tersembunyi
-    file !== basename &&              // bukan file index.js sendiri
-    file.slice(-3) === '.js'          // hanya file .js
+    file.indexOf('.') !== 0 &&       
+    file !== basename &&              
+    file.slice(-3) === '.js'          
   )
   .forEach(file => {
     const modelPath = path.join(__dirname, file);
-    const modelFunc = require(modelPath); // bisa jadi function atau bukan
+    const modelFunc = require(modelPath); 
 
     if (typeof modelFunc === 'function') {
       const model = modelFunc(sequelize, Sequelize.DataTypes);
@@ -35,7 +35,7 @@ fs.readdirSync(__dirname)
     }
   });
 
-// Panggil associate jika tersedia
+
 Object.keys(db).forEach(modelName => {
   if (db[modelName].associate) {
     db[modelName].associate(db);

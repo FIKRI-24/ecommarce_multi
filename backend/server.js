@@ -24,8 +24,8 @@ db.sequelize.authenticate()
     console.error('❌ Gagal koneksi database:', err);
   });
 
-// Sinkronisasi model ke database
-db.sequelize.sync({ alter: true }) // pakai alter untuk pengembangan
+
+db.sequelize.sync({ alter: true }) 
   .then(() => {
     console.log('📦 Model berhasil sinkron');
   })
@@ -38,12 +38,15 @@ app.get('/', (req, res) => {
   res.send('🎉 Selamat datang di E-Commerce Multi Vendor API!');
 });
 
-// Rute-rute (kamu bisa pisahkan nanti ke folder routes/)
-// app.use('/api/auth', require('./routes/auth.routes')); // contoh
-// app.use('/api/users', require('./routes/user.routes')); // contoh
-// // Tambahkan sesuai kebutuhan: produk, toko, driver, dll
+const userRoutes = require('./router/admin/userroutes.js');
+app.use('/admin/users', userRoutes);
 
-// Jalankan server
+const dashboardRoutes = require('./router/admin/dashboardRoutes.js');
+app.use('/admin/dashboard', dashboardRoutes);
+
+const driverRoutes = require('./router/admin/driverRoutes.js');
+app.use ('/admin/drivers', driverRoutes);
+
 app.listen(port, () => {
   console.log(`🚀 Server berjalan di http://localhost:${port}`);
 });

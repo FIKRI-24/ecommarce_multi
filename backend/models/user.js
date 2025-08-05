@@ -1,10 +1,30 @@
 // models/user.js
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    name: DataTypes.STRING,
-    email: DataTypes.STRING,
-    password: DataTypes.STRING,
-    role: DataTypes.ENUM('superadmin', 'penjual', 'pembeli', 'driver')
+    customId: {
+      type: DataTypes.STRING,
+      unique: true
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    email: {
+      type: DataTypes.STRING,
+      unique: true,
+      allowNull: false,
+      validate: {
+        isEmail: true
+      }
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    role: {
+      type: DataTypes.ENUM('superadmin', 'penjual', 'pembeli', 'driver'),
+      allowNull: false
+    }
   });
 
   User.associate = (models) => {
