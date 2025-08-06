@@ -16,7 +16,7 @@ const PageStores = () => {
   const getStores = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:8082/api/stores");
+      const res = await axios.get("http://localhost:5000/admin/stores");
       setStores(res.data);
     } catch (error) {
       console.error("Error fetching stores:", error);
@@ -29,7 +29,7 @@ const PageStores = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Yakin hapus toko ini?")) return;
     try {
-      await axios.delete(`http://localhost:8082/api/stores/${id}`);
+      await axios.delete(`http://localhost:5000/admin/stores/${id}`);
       alert("Toko dihapus");
       getStores();
     } catch (error) {

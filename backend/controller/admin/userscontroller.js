@@ -9,7 +9,7 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    const allowedRoles = ['buyer', 'seller', 'driver', 'admin'];
+    const allowedRoles = ['buyer', 'penjual', 'driver', 'admin'];
     if (!allowedRoles.includes(role)) {
       return res.status(400).json({ message: 'Role tidak valid' });
     }
@@ -84,7 +84,7 @@ const createUser = async (req, res) => {
     const { name, email, password, role } = req.body;
 
     // Validasi role
-    const allowedRoles = ['buyer', 'seller', 'driver', 'admin'];
+    const allowedRoles = ['buyer', 'penjual', 'driver', 'admin'];
     if (!allowedRoles.includes(role)) {
       return res.status(400).json({ message: 'Role tidak valid' });
     }
