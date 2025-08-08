@@ -5,7 +5,7 @@ const cors = require("cors");
 
 // Inisialisasi Express
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5500;
 
 // Middleware
 app.use(cors());
@@ -23,8 +23,7 @@ db.sequelize
     console.error("❌ Gagal koneksi database:", err);
   });
 
-
-// db.sequelize.sync({ alter: true }) 
+// db.sequelize.sync({ alter: true })
 //   .then(() => {
 //     console.log('📦 Model berhasil sinkron');
 //   })
@@ -49,8 +48,8 @@ app.use("/admin/drivers", driverRoutes);
 const storeRoutes = require("./router/admin/store.js");
 app.use("/admin/stores", storeRoutes);
 
-const sellerRoutes = require('./router/seller/selllerroutes.js');
-app.use('/seller', sellerRoutes);
+const sellerRoutes = require("./router/seller/selllerroutes.js");
+app.use("/seller", sellerRoutes);
 
 app.listen(port, () => {
   console.log(`🚀 Server berjalan di http://localhost:${port}`);

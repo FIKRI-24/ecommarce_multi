@@ -29,7 +29,7 @@ const PageProducts = () => {
       return;
 
     try {
-      await axios.delete(`http://localhost:8082/api/products/${id}`);
+      await axios.delete(`http://localhost:5500/api/products/${id}`);
       alert("Produk berhasil dihapus.");
       getProducts();
     } catch (error) {
