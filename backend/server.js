@@ -51,6 +51,6 @@ app.use("/admin/stores", storeRoutes);
 const sellerRoutes = require("./router/seller/selllerroutes.js");
 app.use("/seller", sellerRoutes);
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`🚀 Server berjalan di http://localhost:${port}`);
 });
