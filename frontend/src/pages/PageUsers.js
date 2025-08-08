@@ -15,10 +15,8 @@ const PageUsers = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/admin/users", {
-        
-      });
-      setUsers(response.data.data || response.data); 
+      const response = await axios.get("http://localhost:5000/admin/users", {});
+      setUsers(response.data.data || response.data);
     } catch (error) {
       console.error("Gagal memuat data user:", error);
       alert("Gagal memuat data user. Cek konsol untuk detail.");

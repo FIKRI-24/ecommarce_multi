@@ -22,6 +22,14 @@ import PageOrders from "./pages/PageOrders";
 
 // users
 import PageUsers from "./pages/PageUsers";
+import AddUsers from "./components/user/AddUsers";
+import EditUser from "./components/user/EditUsers";
+
+// landing pages
+import LandingPage from "./components/landingpage/LandingPage";
+import LandingPageProducts from "./pages/landingpage/LandingPageProducts";
+import LandingPageCart from "./pages/landingpage/LandingPageCart";
+
 function App() {
   return (
     <BrowserRouter>
@@ -45,6 +53,13 @@ function App() {
 
         {/* Users */}
         <Route path="/users" element={<PageUsers />} />
+        <Route path="/add-user" elemment={<AddUsers />} />
+        <Route path="/edit-user/:id" element={<EditUser />} />
+
+        {/* Landing Pages */}
+        <Route path="/landing-page" element={<LandingPage />} />
+        <Route path="/landing-products" element={<LandingPageProducts />} />
+        <Route path="/landing-cart" element={<LandingPageCart />} />
       </Routes>
     </BrowserRouter>
   );

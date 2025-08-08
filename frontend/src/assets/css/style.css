@@ -1,5 +1,5 @@
 body {
-  background: linear-gradient(to right, #141e30, #243b55);
+  background: linear-gradient(to right, #141e30, #d6d9db);
 }
 
 /* Layout utama dashboard */
@@ -86,7 +86,7 @@ body {
 .content {
   flex: 1;
   margin-left: 250px; /* Sesuaikan dengan lebar sidebar */
-  background-color: rgb(66, 64, 64);
+  background-color: rgb(240, 236, 236);
   padding: 20px;
   height: 100vh;
   overflow-y: auto; /* Hanya konten yang dapat di-scroll */
