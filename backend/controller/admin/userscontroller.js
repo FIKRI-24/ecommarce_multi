@@ -1,8 +1,9 @@
 const { User } = require('../../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-const SECRET_KEY = 'rahasia_super_admin'; 
+
 
 
 const registerUser = async (req, res) => {
@@ -58,9 +59,16 @@ const loginUser = async (req, res) => {
 
     const token = jwt.sign(
       { id: user.id, role: user.role, customId: user.customId },
-      SECRET_KEY,
+       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
+
+    // Tambahkan redirect berdasarkan role
+    let redirectTo = "";
+    if (user.role === "admin") redirectTo = "/admin/dashboard";
+    else if (user.role === "penjual") redirectTo = "/seller/store";
+    else if (user.role === "pembeli") redirectTo = "/buyer/home";
+    else if (user.role === "driver") redirectTo = "/driver/dashboard";
 
     res.status(200).json({
       message: 'Login berhasil',
@@ -71,35 +79,41 @@ const loginUser = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role
-      }
+      },
+      redirectTo 
     });
+
   } catch (error) {
     res.status(500).json({ message: 'Gagal login', error: error.message });
   }
 };
+
 
 // ✅ CREATE user dengan role: buyer, seller, driver, admin
 const createUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // Validasi role
     const allowedRoles = ['buyer', 'penjual', 'driver', 'admin'];
     if (!allowedRoles.includes(role)) {
       return res.status(400).json({ message: 'Role tidak valid' });
     }
 
-    // Cek email duplikat
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(409).json({ message: 'Email sudah digunakan' });
     }
 
-    // otomatis hasilkan unix per role ya ges yaa
     const customId = await generateCustomId(role);
+    const hashedPassword = await bcrypt.hash(password, 10); // 🔧 Tambahkan ini
 
-    // Buat user
-    const newUser = await User.create({ customId, name, email, password, role });
+    const newUser = await User.create({
+      customId,
+      name,
+      email,
+      password: hashedPassword, 
+      role
+    });
 
     res.status(201).json({
       message: 'User berhasil dibuat',

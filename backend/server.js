@@ -25,13 +25,13 @@ db.sequelize.authenticate()
   });
 
 
-db.sequelize.sync({ alter: true }) 
-  .then(() => {
-    console.log('📦 Model berhasil sinkron');
-  })
-  .catch(err => {
-    console.error('❌ Gagal sinkron model:', err);
-  });
+// db.sequelize.sync({ alter: true }) 
+//   .then(() => {
+//     console.log('📦 Model berhasil sinkron');
+//   })
+//   .catch(err => {
+//     console.error('❌ Gagal sinkron model:', err);
+//   });
 
 // Root route
 app.get('/', (req, res) => {
@@ -49,6 +49,9 @@ app.use ('/admin/drivers', driverRoutes);
 
 const storeRoutes = require('./router/admin/store.js');
 app.use('/admin/stores', storeRoutes);
+
+const sellerRoutes = require('./router/seller/selllerroutes.js');
+app.use('/seller', sellerRoutes);
 
 app.listen(port, () => {
   console.log(`🚀 Server berjalan di http://localhost:${port}`);

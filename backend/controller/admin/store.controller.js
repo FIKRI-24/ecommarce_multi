@@ -1,4 +1,4 @@
-const { Store, User } = require('../../models');
+const { Store, User, Product } = require('../../models');
 
 // 🔍 Ambil semua toko
 exports.getAllStores = async (req, res) => {
@@ -17,22 +17,38 @@ exports.getAllStores = async (req, res) => {
 };
 
 // 🔎 Ambil toko berdasarkan ID
+
+
 exports.getStoreById = async (req, res) => {
   try {
-    const store = await Store.findByPk(req.params.id, {
-      include: {
-        model: User,
-        as: 'owner',
-        attributes: ['id', 'name', 'email', 'customId']
-      }
+    const { id } = req.params;
+
+    const store = await Store.findOne({
+      where: { id },
+      include: [
+        {
+          model: User,
+          as: 'owner',
+          attributes: ['id', 'name', 'email', 'customId']
+        },
+        {
+          model: Product,
+          as: 'products'
+        }
+      ]
     });
-    if (!store) return res.status(404).json({ message: 'Toko tidak ditemukan' });
+
+    if (!store) {
+      return res.status(404).json({ message: 'Toko tidak ditemukan' });
+    }
 
     res.status(200).json(store);
   } catch (error) {
-    res.status(500).json({ message: 'Gagal mengambil detail toko', error });
+    console.error('❌ Error getStoreById:', error);
+    res.status(500).json({ message: 'Gagal mengambil detail toko', error: error.message });
   }
 };
+
 
 // ✅ Buat toko berdasarkan customId user
 exports.createStore = async (req, res) => {
