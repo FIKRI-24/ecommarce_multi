@@ -13,7 +13,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const db = require("./models");
-
 db.sequelize
   .authenticate()
   .then(() => {
@@ -51,6 +50,6 @@ app.use("/admin/stores", storeRoutes);
 const sellerRoutes = require("./router/seller/selllerroutes.js");
 app.use("/seller", sellerRoutes);
 
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`🚀 Server berjalan di http://localhost:${port}`);
 });
