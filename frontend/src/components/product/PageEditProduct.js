@@ -1,19 +1,56 @@
+import React, { useState, useEffect, useCallback } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Sidebar from "../layout/Sidebar"; // Pastikan path benar
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
 import "bulma/css/bulma.min.css";
 
-const AddProduct = () => {
+const EditProduct = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  // State form
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [stock, setStock] = useState(0);
-  const [image, setImage] = useState(null); // untuk sampul produk
-  const [storeId, setStoreId] = useState(""); // bisa diisi otomatis nanti
-  const [userId, setUserId] = useState(""); // bisa dari login
-  const navigate = useNavigate();
+  const [stock, setStock] = useState("");
+  const [image, setImage] = useState(null); // File baru
+  const [imagePreview, setImagePreview] = useState(""); // URL preview (dari API atau file baru)
 
+  // Ambil data produk dari API
+  const getProductById = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5500/admin/products/${id}`
+      );
+      const product = response.data;
+
+      // Isi form dengan data dari API
+      setName(product.name || "");
+      setDescription(product.description || "");
+      setPrice(product.price || "");
+      setStock(product.stock || "");
+      // Simpan URL gambar dari server untuk preview
+      setImagePreview(product.image || ""); // Asumsi `image` adalah URL/file path
+    } catch (error) {
+      console.error("Error fetching product details:", error);
+      alert("Gagal memuat data produk.");
+    }
+  }, [id]);
+
+  useEffect(() => {
+    getProductById();
+  }, [getProductById]);
+
+  // Handle perubahan file gambar
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file)); // Preview dari file lokal
+    }
+  };
+
+  // Handle submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -22,23 +59,21 @@ const AddProduct = () => {
     formData.append("description", description);
     formData.append("price", parseFloat(price));
     formData.append("stock", parseInt(stock));
-    formData.append("storeId", parseInt(storeId));
-    formData.append("userId", parseInt(userId));
     if (image) {
-      formData.append("image", image);
+      formData.append("image", image); // Hanya kirim jika ada file baru
     }
 
     try {
-      await axios.post("http://localhost:8082/api/products", formData, {
+      await axios.put(`http://localhost:5500/admin/products/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("Produk berhasil ditambahkan");
-      navigate("/products"); // Asumsi route daftar produk adalah /products
+      alert("Produk berhasil diperbarui!");
+      navigate("/products"); // Asumsi halaman daftar produk di /products
     } catch (error) {
-      console.error("Error creating product:", error);
-      alert("Gagal menambahkan produk. Cek konsol untuk detail.");
+      console.error("Error updating product:", error);
+      alert("Gagal memperbarui produk. Cek konsol untuk detail.");
     }
   };
 
@@ -54,12 +89,15 @@ const AddProduct = () => {
           </Link>
 
           {/* Judul */}
-          <h2 className="title has-text-centered has-text-info">
-            ➕ Tambah Produk Baru
+          <h2 className="title has-text-centered has-text-primary">
+            ✏️ Edit Produk
           </h2>
 
           {/* Form */}
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={handleSubmit}
+            style={{ maxWidth: "700px", margin: "0 auto" }}
+          >
             {/* Nama Produk */}
             <div className="field">
               <label className="label">Nama Produk</label>
@@ -69,7 +107,7 @@ const AddProduct = () => {
                   className="input"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Contoh: Laptop Gaming XYZ"
+                  placeholder="Masukkan nama produk"
                   required
                 />
               </div>
@@ -120,7 +158,7 @@ const AddProduct = () => {
               </div>
             </div>
 
-            {/* Gambar Sampul */}
+            {/* Gambar Produk */}
             <div className="field">
               <label className="label">Gambar Produk</label>
               <div className="control">
@@ -128,46 +166,34 @@ const AddProduct = () => {
                   type="file"
                   className="input"
                   accept="image/*"
-                  onChange={(e) => setImage(e.target.files[0])}
+                  onChange={handleFileChange}
                 />
               </div>
-            </div>
 
-            {/* Store ID (bisa disembunyikan nanti jika otomatis) */}
-            <div className="field">
-              <label className="label">Store ID</label>
-              <div className="control">
-                <input
-                  type="number"
-                  className="input"
-                  value={storeId}
-                  onChange={(e) => setStoreId(e.target.value)}
-                  placeholder="ID toko (dari login)"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* User ID (bisa disembunyikan nanti jika otomatis) */}
-            <div className="field">
-              <label className="label">User ID</label>
-              <div className="control">
-                <input
-                  type="number"
-                  className="input"
-                  value={userId}
-                  onChange={(e) => setUserId(e.target.value)}
-                  placeholder="ID penjual (dari login)"
-                  required
-                />
-              </div>
+              {/* Preview Gambar */}
+              {imagePreview && (
+                <figure
+                  className="image mt-3"
+                  style={{ maxWidth: "300px", margin: "10px auto" }}
+                >
+                  <img
+                    src={imagePreview}
+                    alt="Preview Produk"
+                    style={{
+                      borderRadius: "8px",
+                      border: "1px solid #ddd",
+                      objectFit: "cover",
+                    }}
+                  />
+                </figure>
+              )}
             </div>
 
             {/* Submit Button */}
             <div className="field is-grouped is-grouped-right mt-5">
               <div className="control">
                 <button type="submit" className="button is-success is-large">
-                  ✅ Simpan Produk
+                  ✅ Simpan Perubahan
                 </button>
               </div>
             </div>
@@ -178,4 +204,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;
