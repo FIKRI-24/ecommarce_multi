@@ -32,11 +32,13 @@ import LandingPage from "./components/landingpage/LandingPage";
 import LandingPageProducts from "./pages/landingpage/LandingPageProducts";
 import LandingPageCart from "./pages/landingpage/LandingPageCart";
 
+import PageLogin from "./pages/PageLogin";
+import PageRegister from "./pages/PageRegister";
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<DashboardAdmin />} />
+        <Route path="/dashboard" element={<DashboardAdmin />} />
         <Route path="/products" element={<PageProducts />} />
         <Route path="/stores" element={<PageStores />} />
         <Route path="/payments" element={<PagePayments />} />
@@ -64,6 +66,10 @@ function App() {
         <Route path="/landing-page" element={<LandingPage />} />
         <Route path="/landing-products" element={<LandingPageProducts />} />
         <Route path="/landing-cart" element={<LandingPageCart />} />
+
+        {/* Login Page */}
+        <Route path="/login" element={<PageLogin />} />
+        <Route path="/register" element={<PageRegister />} />
       </Routes>
     </BrowserRouter>
   );
