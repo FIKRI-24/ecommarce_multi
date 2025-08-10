@@ -15,7 +15,7 @@ const PageOrders = () => {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8082/api/orders");
+      const response = await axios.get("http://localhost:5500/api/orders");
       setOrders(response.data);
     } catch (error) {
       console.error("Gagal memuat data order:", error);

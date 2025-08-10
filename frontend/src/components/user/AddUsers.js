@@ -29,8 +29,7 @@ const AddUser = () => {
     setLoading(true);
 
     try {
-      const API_URL = process.env.REACT_APP_API_URL;
-      const response = await axios.post(`${API_URL}/users`, {
+      const response = await axios.post(`http://localhost:5500/admin/users`, {
         name,
         email,
         password,
@@ -54,7 +53,7 @@ const AddUser = () => {
         alert(`Gagal: ${error.response.data.message || "Periksa data Anda"}`);
       } else if (error.request) {
         alert(
-          "Tidak dapat terhubung ke server. Cek backend sedang jalan di http://localhost:5000"
+          "Tidak dapat terhubung ke server. Cek backend sedang jalan di http://localhost:5500"
         );
       } else {
         alert("Terjadi kesalahan saat membuat user.");

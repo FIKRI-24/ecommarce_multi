@@ -8,6 +8,12 @@ const PageUsers = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // State untuk modal
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [selectedUserName, setSelectedUserName] = useState("");
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -15,7 +21,7 @@ const PageUsers = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/admin/users", {});
+      const response = await axios.get("http://localhost:5500/admin/users");
       setUsers(response.data.data || response.data);
     } catch (error) {
       console.error("Gagal memuat data user:", error);
@@ -36,9 +42,35 @@ const PageUsers = () => {
     return <span className={`tag ${colors[role] || "is-dark"}`}>{role}</span>;
   };
 
-  // Status badge (opsional, jika ada status aktif/nonaktif)
+  // Status badge
   const getStatusBadge = (user) => {
     return <span className="tag is-success">Aktif</span>;
+  };
+
+  // Handle klik tombol hapus
+  const handleDeleteClick = (id, name) => {
+    setSelectedUserId(id);
+    setSelectedUserName(name);
+    setShowConfirmModal(true);
+  };
+
+  // Fungsi hapus user
+  const handleDeleteConfirm = async () => {
+    try {
+      await axios.delete(`http://localhost:5500/admin/users/${selectedUserId}`);
+      setShowConfirmModal(false);
+      setShowSuccessModal(true);
+      fetchUsers(); // Refresh daftar user
+
+      // Tutup modal sukses setelah 2 detik
+      setTimeout(() => {
+        setShowSuccessModal(false);
+      }, 2000);
+    } catch (error) {
+      console.error("Gagal menghapus user:", error);
+      alert("Gagal menghapus user. Cek konsol untuk detail.");
+      setShowConfirmModal(false);
+    }
   };
 
   return (
@@ -64,7 +96,7 @@ const PageUsers = () => {
           </Link>
         </div>
 
-        {/* Loading */}
+        {/* Tabel Pengguna */}
         {loading ? (
           <div className="has-text-centered">
             <p className="is-size-5 has-text-grey">Memuat data pengguna...</p>
@@ -97,24 +129,21 @@ const PageUsers = () => {
                       <td>{getStatusBadge(user)}</td>
                       <td>
                         <div className="buttons are-small">
-                          {/* Lihat Detail */}
                           <Link to={`/user/${user.id}`}>
                             <button className="button is-light">
                               👁️ Lihat
                             </button>
                           </Link>
-
-                          {/* Edit */}
                           <Link to={`/edit-user/${user.id}`}>
                             <button className="button is-info is-light">
                               ✏️ Edit
                             </button>
                           </Link>
-
-                          {/* Hapus */}
                           <button
                             className="button is-danger is-light"
-                            onClick={() => handleDelete(user.id, user.name)}
+                            onClick={() =>
+                              handleDeleteClick(user.id, user.name)
+                            }
                           >
                             🗑️ Hapus
                           </button>
@@ -134,27 +163,93 @@ const PageUsers = () => {
           </div>
         )}
       </div>
+
+      {/* Modal Konfirmasi Hapus */}
+      {showConfirmModal && (
+        <div className="modal is-active">
+          <div
+            className="modal-background"
+            onClick={() => setShowConfirmModal(false)}
+          ></div>
+          <div className="modal-content">
+            <div className="box">
+              <p
+                className="has-text-centered"
+                style={{ fontSize: "1.2rem", marginBottom: "20px" }}
+              >
+                <span
+                  style={{
+                    fontSize: "2rem",
+                    color: "red",
+                    marginRight: "10px",
+                  }}
+                >
+                  ✖️
+                </span>
+                Apakah Anda yakin ingin menghapus user:{" "}
+                <strong>{selectedUserName}</strong>?
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "10px",
+                  marginTop: "20px",
+                }}
+              >
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  className="button"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleDeleteConfirm}
+                  className="button is-danger"
+                >
+                  Hapus
+                </button>
+              </div>
+            </div>
+          </div>
+          <button
+            className="modal-close is-large"
+            aria-label="close"
+            onClick={() => setShowConfirmModal(false)}
+          ></button>
+        </div>
+      )}
+
+      {/* Modal Sukses Hapus */}
+      {showSuccessModal && (
+        <div className="modal is-active">
+          <div
+            className="modal-background"
+            onClick={() => setShowSuccessModal(false)}
+          ></div>
+          <div className="modal-content">
+            <div className="box has-text-centered">
+              <p
+                style={{
+                  fontSize: "1.5rem",
+                  color: "green",
+                  marginBottom: "10px",
+                }}
+              >
+                ✔️
+              </p>
+              <p>User berhasil dihapus!</p>
+            </div>
+          </div>
+          <button
+            className="modal-close is-large"
+            aria-label="close"
+            onClick={() => setShowSuccessModal(false)}
+          ></button>
+        </div>
+      )}
     </div>
   );
-
-  // Fungsi Hapus User
-  function handleDelete(id, name) {
-    if (!window.confirm(`Apakah Anda yakin ingin menghapus user: ${name}?`))
-      return;
-
-    axios
-      .delete(`http://localhost:8082/api/users/${id}`, {
-        // headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      })
-      .then(() => {
-        alert("User berhasil dihapus");
-        fetchUsers(); // Refresh
-      })
-      .catch((error) => {
-        console.error("Gagal hapus user:", error);
-        alert("Gagal menghapus user. Cek konsol.");
-      });
-  }
 };
 
 export default PageUsers;

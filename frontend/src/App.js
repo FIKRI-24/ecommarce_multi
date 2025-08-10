@@ -4,15 +4,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 
 // products
-import Products from "./pages/PageProducts";
+import PageProducts from "./pages/PageProducts";
 import PageProductDetail from "./components/product/PageProductDetail";
-import EditProducts from "./components/product/EditProduct";
-import AddProducts from "./components/product/AddProduct";
+import EditProducts from "./components/product/PageEditProduct";
+import AddProducts from "./components/product/PageAddProduct";
 
 // stores
 import PageStores from "./pages/PageStores";
-import AddStore from "./components/store/AddStore";
-import EditStore from "./components/store/EditStore";
+import PageAddStore from "./components/store/PageAddStore";
+import PageEditStore from "./components/store/PageEditStore";
+import PageStoreDetail from "./components/store/PageStoreDetail";
 
 // payments
 import PagePayments from "./pages/PagePayments";
@@ -24,18 +25,21 @@ import PageOrders from "./pages/PageOrders";
 import PageUsers from "./pages/PageUsers";
 import AddUsers from "./components/user/AddUsers";
 import EditUser from "./components/user/EditUsers";
+import PageUserDetail from "./components/user/PageUsersDetail";
 
 // landing pages
 import LandingPage from "./components/landingpage/LandingPage";
 import LandingPageProducts from "./pages/landingpage/LandingPageProducts";
 import LandingPageCart from "./pages/landingpage/LandingPageCart";
 
+import PageLogin from "./pages/PageLogin";
+import PageRegister from "./pages/PageRegister";
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<DashboardAdmin />} />
-        <Route path="/products" element={<Products />} />
+        <Route path="/dashboard" element={<DashboardAdmin />} />
+        <Route path="/products" element={<PageProducts />} />
         <Route path="/stores" element={<PageStores />} />
         <Route path="/payments" element={<PagePayments />} />
 
@@ -45,21 +49,27 @@ function App() {
         <Route path="/add-Product" element={<AddProducts />} />
 
         {/* Stores */}
-        <Route path="/add-store" element={<AddStore />} />
-        <Route path="/edit-store/:id" element={<EditStore />} />
+        <Route path="/add-stores" element={<PageAddStore />} />
+        <Route path="/edit-stores/:id" element={<PageEditStore />} />
+        <Route path="/stores/:id" element={<PageStoreDetail />} />
 
         {/* Orders */}
         <Route path="/orders" element={<PageOrders />} />
 
         {/* Users */}
         <Route path="/users" element={<PageUsers />} />
-        <Route path="/add-user" elemment={<AddUsers />} />
+        <Route path="/user/:id" element={<PageUserDetail />} />
+        <Route path="/add-user" element={<AddUsers />} />
         <Route path="/edit-user/:id" element={<EditUser />} />
 
         {/* Landing Pages */}
         <Route path="/landing-page" element={<LandingPage />} />
         <Route path="/landing-products" element={<LandingPageProducts />} />
         <Route path="/landing-cart" element={<LandingPageCart />} />
+
+        {/* Login Page */}
+        <Route path="/login" element={<PageLogin />} />
+        <Route path="/register" element={<PageRegister />} />
       </Routes>
     </BrowserRouter>
   );

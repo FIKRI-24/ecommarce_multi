@@ -15,7 +15,7 @@ const PagePayments = () => {
   const fetchPayments = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:8082/api/payments");
+      const response = await axios.get("http://localhost:5500/api/payments");
       setPayments(response.data);
     } catch (error) {
       console.error("Gagal memuat data pembayaran:", error);

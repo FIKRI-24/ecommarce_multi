@@ -14,7 +14,7 @@ const Sidebar = () => {
       <ul className="menu">
         <li>
           <i className="fas fa-tachometer-alt"></i>
-          <Link to="/"> Dashboard </Link>
+          <Link to="/dashboard"> Dashboard </Link>
         </li>
         <li>
           <i className="fas fa-box"></i>

@@ -20,8 +20,9 @@ const EditUser = () => {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const API_URL = process.env.REACT_APP_API_URL;
-        const response = await axios.get(`${API_URL}/users/${id}`);
+        const response = await axios.get(
+          `http://localhost:5500/admin/users/${id}`
+        );
 
         const userData = response.data.data || response.data;
         setUser(userData);
@@ -58,8 +59,7 @@ const EditUser = () => {
     setLoading(true);
 
     try {
-      const API_URL = process.env.REACT_APP_API_URL;
-      await axios.put(`${API_URL}/users/${id}`, {
+      await axios.put(`http://localhost:5500/admin/users/${id}`, {
         name,
         email,
         role,
@@ -75,7 +75,7 @@ const EditUser = () => {
         alert(`Gagal: ${error.response.data.message || "Periksa data Anda"}`);
       } else if (error.request) {
         alert(
-          "Tidak dapat terhubung ke server. Pastikan backend jalan di http://localhost:5000"
+          "Tidak dapat terhubung ke server. Pastikan backend jalan di http://localhost:5500"
         );
       } else {
         alert("Terjadi kesalahan saat memperbarui user.");

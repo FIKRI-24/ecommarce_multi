@@ -9,6 +9,10 @@ const PageStores = () => {
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Modal delete
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedStoreId, setSelectedStoreId] = useState(null);
+
   useEffect(() => {
     getStores();
   }, []);
@@ -16,49 +20,83 @@ const PageStores = () => {
   const getStores = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:5000/admin/stores");
-      setStores(res.data);
+      const res = await axios.get("http://localhost:5500/admin/stores");
+
+      // Pastikan formatnya array
+      const storeData = Array.isArray(res.data)
+        ? res.data
+        : res.data.data || [];
+
+      // Langsung ambil nama pemilik dari field owner
+      const enrichedStores = storeData.map((store) => ({
+        ...store,
+        ownerName: store.owner?.name || "Tidak Diketahui",
+        productCount: Array.isArray(store.products)
+          ? store.products.length
+          : store.productCount ?? store.productsCount ?? 0,
+      }));
+
+      setStores(enrichedStores);
     } catch (error) {
-      console.error("Error fetching stores:", error);
-      alert("Gagal memuat data toko.");
+      console.error("Gagal memuat data toko:", error);
+      alert("Gagal memuat data toko. Cek konsol untuk detail.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Yakin hapus toko ini?")) return;
+  const handleDeleteClick = (id) => {
+    setSelectedStoreId(id);
+    setShowConfirmModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
     try {
-      await axios.delete(`http://localhost:5000/admin/stores/${id}`);
-      alert("Toko dihapus");
-      getStores();
+      await axios.delete(
+        `http://localhost:5500/admin/stores/${selectedStoreId}`
+      );
+      setShowConfirmModal(false);
+      alert("Toko berhasil dihapus.");
+      getStores(); // Refresh daftar
     } catch (error) {
-      alert("Gagal menghapus toko.");
+      console.error("Gagal menghapus toko:", error);
+      alert("Gagal menghapus toko. Cek konsol untuk detail.");
+      setShowConfirmModal(false);
     }
   };
 
   return (
     <div className="dashboard">
       <Sidebar />
+
       <div
         className="content"
-        style={{ padding: "30px", backgroundColor: "#f8f9fa" }}
+        style={{ backgroundColor: "#f8f9fa", padding: "30px" }}
       >
+        {/* Header */}
         <div style={{ marginBottom: "30px" }}>
           <h1 className="title is-3 has-text-dark">🏪 Manajemen Toko</h1>
           <p className="subtitle is-6 has-text-grey">
-            Kelola toko penjual Anda
+            Kelola semua toko penjual: lihat pemilik, status, dan produknya
           </p>
         </div>
 
+        {/* Tombol Tambah */}
         <div style={{ textAlign: "right", marginBottom: "20px" }}>
-          <Link to="/add-store">
+          <Link to="/add-stores">
             <button className="button is-link">➕ Tambah Toko</button>
           </Link>
         </div>
 
+        {/* Tabel Toko */}
         {loading ? (
-          <div className="has-text-centered">Memuat...</div>
+          <div className="has-text-centered">
+            <p className="is-size-5 has-text-grey">Memuat data toko...</p>
+          </div>
+        ) : stores.length === 0 ? (
+          <div className="notification is-info">
+            Belum ada toko yang terdaftar.
+          </div>
         ) : (
           <div className="table-container">
             <table className="table is-fullwidth is-striped is-hoverable">
@@ -67,64 +105,147 @@ const PageStores = () => {
                   <th>No</th>
                   <th>Nama Toko</th>
                   <th>Status</th>
-                  <th>Pemilik (User ID)</th>
+                  <th>Pemilik</th>
                   <th>Produk</th>
                   <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>
-                {stores.length > 0 ? (
-                  stores.map((store, index) => (
-                    <tr key={store.id}>
-                      <td>{index + 1}</td>
-                      <td>{store.name}</td>
-                      <td>
-                        <span
-                          className={`tag ${
-                            store.status === "approved"
-                              ? "is-success"
-                              : "is-danger"
-                          }`}
-                        >
-                          {store.status}
-                        </span>
-                      </td>
-                      <td>{store.userId}</td>
-                      <td>{store.Products?.length || 0}</td>
-                      <td>
-                        <div className="buttons are-small">
-                          <Link to={`/store/${store.id}`}>
-                            <button className="button is-light">
-                              👁️ Lihat
-                            </button>
-                          </Link>
-                          <Link to={`/edit-store/${store.id}`}>
-                            <button className="button is-info is-light">
-                              ✏️ Edit
-                            </button>
-                          </Link>
-                          <button
-                            className="button is-danger is-light"
-                            onClick={() => handleDelete(store.id)}
+                {stores.map((store, index) => (
+                  <tr key={store.id}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <strong>{store.name}</strong>
+                      <br />
+                      <small className="has-text-grey">
+                        {store.description || "-"}
+                      </small>
+                    </td>
+                    <td>
+                      <span
+                        className={`tag ${
+                          store.status === "approved"
+                            ? "is-success"
+                            : store.status === "pending"
+                            ? "is-warning"
+                            : "is-danger"
+                        }`}
+                      >
+                        {store.status === "approved"
+                          ? "Disetujui"
+                          : store.status === "pending"
+                          ? "Menunggu"
+                          : "Ditolak"}
+                      </span>
+                    </td>
+                    <td>
+                      <strong>{store.ownerName}</strong>
+                      <br />
+                      <small className="has-text-grey">
+                        {store.owner?.email}
+                      </small>
+                    </td>
+
+                    <td>
+                      {store.products && store.products.length > 0 ? (
+                        <div>
+                          <strong>{store.products.length} Produk</strong>
+                          <ul
+                            style={{
+                              listStyle: "none",
+                              padding: 0,
+                              marginTop: "5px",
+                            }}
                           >
-                            🗑️ Hapus
-                          </button>
+                            {store.products.slice(0, 3).map((product) => (
+                              <li key={product.id} className="has-text-grey">
+                                • {product.name} (Rp{" "}
+                                {product.price.toLocaleString()})
+                              </li>
+                            ))}
+                            {store.products.length > 3 && (
+                              <li className="has-text-grey">
+                                • ... dan {store.products.length - 3} lainnya
+                              </li>
+                            )}
+                          </ul>
                         </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="has-text-centered has-text-grey">
-                      Belum ada toko.
+                      ) : (
+                        <span className="has-text-grey">Tidak ada produk</span>
+                      )}
+                    </td>
+                    <td>
+                      <div className="buttons are-small">
+                        <Link to={`/stores/${store.id}`}>
+                          <button className="button is-light">
+                            👁️ Lihat Detail
+                          </button>
+                        </Link>
+                        <Link to={`/edit-stores/${store.id}`}>
+                          <button className="button is-info is-light">
+                            ✏️ Edit
+                          </button>
+                        </Link>
+                        <button
+                          className="button is-danger is-light"
+                          onClick={() => handleDeleteClick(store.id)}
+                        >
+                          🗑️ Hapus
+                        </button>
+                      </div>
                     </td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
         )}
       </div>
+
+      {/* Modal Konfirmasi Hapus */}
+      {showConfirmModal && (
+        <div className="modal is-active">
+          <div
+            className="modal-background"
+            onClick={() => setShowConfirmModal(false)}
+          ></div>
+          <div className="modal-content">
+            <div className="box">
+              <p
+                className="has-text-centered"
+                style={{ fontSize: "1.2rem", marginBottom: "20px" }}
+              >
+                ❌ Apakah Anda yakin ingin menghapus toko ini?
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "10px",
+                }}
+              >
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  className="button"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleDeleteConfirm}
+                  className="button is-danger"
+                >
+                  Hapus
+                </button>
+              </div>
+            </div>
+          </div>
+          <button
+            className="modal-close is-large"
+            aria-label="close"
+            onClick={() => setShowConfirmModal(false)}
+          ></button>
+        </div>
+      )}
     </div>
   );
 };
