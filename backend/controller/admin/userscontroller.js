@@ -163,11 +163,24 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ message: 'User tidak ditemukan' });
     }
 
-    
+    // Validasi role
+    const allowedRoles = ['pembeli', 'penjual', 'driver', 'admin'];
+    if (role && !allowedRoles.includes(role)) {
+      return res.status(400).json({ message: 'Role tidak valid' });
+    }
+
     user.name = name || user.name;
     user.email = email || user.email;
-    user.password = password || user.password;
-    user.role = role || user.role;
+
+    if (password) {
+      const bcrypt = require('bcrypt');
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+
+    if (role) {
+      user.role = role;
+    }
 
     await user.save();
 
@@ -176,6 +189,7 @@ const updateUser = async (req, res) => {
     res.status(500).json({ message: 'Gagal memperbarui user', error });
   }
 };
+
 
 // ✅ DELETE user
 const deleteUser = async (req, res) => {
