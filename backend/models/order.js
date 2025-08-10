@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
   Order.associate = models => {
     Order.belongsTo(models.User, { foreignKey: "buyerId" });
     Order.belongsTo(models.Store, { foreignKey: "storeId" });
-    Order.hasMany(models.OrderItem, { foreignKey: "orderId" });
+    Order.hasMany(models.OrderItem, { foreignKey: "orderId", as: "items" }); // alias penting
     Order.hasOne(models.Delivery, { foreignKey: "orderId" });
     Order.hasOne(models.Payment, { foreignKey: "orderId" });
   };
