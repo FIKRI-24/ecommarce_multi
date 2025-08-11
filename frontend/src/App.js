@@ -18,6 +18,9 @@ import PageStoreDetail from "./components/store/PageStoreDetail";
 // payments
 import PagePayments from "./pages/PagePayments";
 
+// seller
+import DashboardSeller from "./pages/seller/DashboardSeller";
+
 // orders
 import PageOrders from "./pages/PageOrders";
 
@@ -30,15 +33,30 @@ import PageUserDetail from "./components/user/PageUsersDetail";
 // landing pages
 import LandingPage from "./components/landingpage/LandingPage";
 import LandingPageProducts from "./pages/landingpage/LandingPageProducts";
-import LandingPageCart from "./pages/landingpage/LandingPageCart";
+// import LandingPageCart from "./pages/landingpage/LandingPageCart";
 
 import PageLogin from "./pages/PageLogin";
 import PageRegister from "./pages/PageRegister";
+
+// seller products
+import MyProducts from "./pages/seller/MyProducts";
+import CreateProduct from "./pages/seller/CreateProduct";
+import EditProduct from "./pages/seller/EditProduct";
+
+// seller orders
+import MyOrders from "./pages/seller/MyOrders";
+import OrderDetail from "./pages/seller/OrderDetail";
+
+// drivers
+import DashboardDriver from "./pages/driver/DashboardDriver";
+// cart
+import PageCart from "./pages/PageCart";
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/dashboard" element={<DashboardAdmin />} />
+        {/* route admin */}
+        <Route path="/" element={<DashboardAdmin />} />
         <Route path="/products" element={<PageProducts />} />
         <Route path="/stores" element={<PageStores />} />
         <Route path="/payments" element={<PagePayments />} />
@@ -65,11 +83,28 @@ function App() {
         {/* Landing Pages */}
         <Route path="/landing-page" element={<LandingPage />} />
         <Route path="/landing-products" element={<LandingPageProducts />} />
-        <Route path="/landing-cart" element={<LandingPageCart />} />
+        {/* <Route path="/landing-cart" element={<LandingPageCart />} /> */}
 
         {/* Login Page */}
         <Route path="/login" element={<PageLogin />} />
         <Route path="/register" element={<PageRegister />} />
+
+        {/* Seller route */}
+        <Route path="/seller/store" element={<DashboardSeller />} />
+        <Route path="/seller/my-products" element={<MyProducts />} />
+        <Route path="/seller/products/create" element={<CreateProduct />} />
+        <Route path="/seller/products/edit/:id" element={<EditProduct />} />
+
+        {/* Seller Orders */}
+        <Route path="/seller/my-orders" element={<MyOrders />} />
+        <Route path="/seller/orders/:id" element={<OrderDetail />} />
+        {/* <Route path="/seller/products/:id" element={<PageProductDetail />} />  */}
+
+        {/* drivers route */}
+        <Route path="/driver/dashboard" element={<DashboardDriver />} />
+
+        {/* Cart */}
+        <Route path="/buyer/home" element={<PageCart />} />
       </Routes>
     </BrowserRouter>
   );
