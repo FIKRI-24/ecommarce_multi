@@ -3,12 +3,37 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+// 🔹 Generate Custom ID berdasarkan role & last record
+const generateCustomId = async (role) => {
+  const prefixMap = {
+    superadmin: 'ADM',
+    penjual: 'SEL',
+    pembeli: 'BUY',
+    driver: 'DRV'
+  };
 
+  const prefix = prefixMap[role] || 'USR';
+
+  // Ambil user terakhir dengan role itu, urutkan descending
+  const lastUser = await User.findOne({
+    where: { role },
+    order: [['customId', 'DESC']]
+  });
+
+  let lastNumber = 0;
+  if (lastUser && lastUser.customId) {
+    lastNumber = parseInt(lastUser.customId.replace(prefix, ''), 10);
+  }
+
+  return `${prefix}${String(lastNumber + 1).padStart(4, '0')}`;
+};
+
+// 🔹 REGISTER
 const registerUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
+    const allowedRoles = ['pembeli', 'penjual', 'driver', 'superadmin'];
 
-    const allowedRoles = ['pembeli', 'penjual', 'driver', 'admin'];
     if (!allowedRoles.includes(role)) {
       return res.status(400).json({ message: 'Role tidak valid' });
     }
@@ -44,12 +69,12 @@ const registerUser = async (req, res) => {
   }
 };
 
-// ✅ LOGIN dengan verifikasi password dan JWT
+// 🔹 LOGIN
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await User.findOne({ where: { email } });
+
     if (!user) return res.status(404).json({ message: 'User tidak ditemukan' });
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -57,13 +82,12 @@ const loginUser = async (req, res) => {
 
     const token = jwt.sign(
       { id: user.id, role: user.role, customId: user.customId },
-       process.env.JWT_SECRET,
+      process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
 
-    // Tambahkan redirect berdasarkan role
     let redirectTo = "";
-    if (user.role === "admin") redirectTo = "/admin/dashboard";
+    if (user.role === "superadmin") redirectTo = "/admin/dashboard";
     else if (user.role === "penjual") redirectTo = "/seller/store";
     else if (user.role === "pembeli") redirectTo = "/buyer/home";
     else if (user.role === "driver") redirectTo = "/driver/dashboard";
@@ -78,7 +102,7 @@ const loginUser = async (req, res) => {
         email: user.email,
         role: user.role
       },
-      redirectTo 
+      redirectTo
     });
 
   } catch (error) {
@@ -86,13 +110,12 @@ const loginUser = async (req, res) => {
   }
 };
 
-
-// ✅ CREATE user dengan role: buyer, seller, driver, admin
+// 🔹 CREATE user (hanya admin bisa pakai ini)
 const createUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
+    const allowedRoles = ['pembeli', 'penjual', 'driver', 'superadmin'];
 
-    const allowedRoles = ['pembeli', 'penjual', 'driver', 'admin'];
     if (!allowedRoles.includes(role)) {
       return res.status(400).json({ message: 'Role tidak valid' });
     }
@@ -103,13 +126,13 @@ const createUser = async (req, res) => {
     }
 
     const customId = await generateCustomId(role);
-    const hashedPassword = await bcrypt.hash(password, 10); // 🔧 Tambahkan ini
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = await User.create({
       customId,
       name,
       email,
-      password: hashedPassword, 
+      password: hashedPassword,
       role
     });
 
@@ -124,36 +147,38 @@ const createUser = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: 'Gagal membuat user', error: error.message });
   }
 };
 
-// ambil semua users per roleee
+// 🔹 GET semua user
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({ attributes: { exclude: ['password'] } });
     res.status(200).json({ message: 'Data user ditemukan', data: users });
   } catch (error) {
-    res.status(500).json({ message: 'Gagal mengambil data user', error });
+    res.status(500).json({ message: 'Gagal mengambil data user', error: error.message });
   }
 };
 
-// ambil per id
+// 🔹 GET user by ID
 const getUserById = async (req, res) => {
   try {
-    const user = await User.findByPk(req.params.id);
+    const user = await User.findByPk(req.params.id, {
+      attributes: { exclude: ['password'] }
+    });
+
     if (!user) {
       return res.status(404).json({ message: 'User tidak ditemukan' });
     }
 
     res.status(200).json({ message: 'Detail user ditemukan', data: user });
   } catch (error) {
-    res.status(500).json({ message: 'Gagal mengambil detail user', error });
+    res.status(500).json({ message: 'Gagal mengambil detail user', error: error.message });
   }
 };
 
-// edit 
+// 🔹 UPDATE user
 const updateUser = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
@@ -163,35 +188,24 @@ const updateUser = async (req, res) => {
       return res.status(404).json({ message: 'User tidak ditemukan' });
     }
 
-    // Validasi role
-    const allowedRoles = ['pembeli', 'penjual', 'driver', 'admin'];
+    const allowedRoles = ['pembeli', 'penjual', 'driver', 'superadmin'];
     if (role && !allowedRoles.includes(role)) {
       return res.status(400).json({ message: 'Role tidak valid' });
     }
 
-    user.name = name || user.name;
-    user.email = email || user.email;
-
-    if (password) {
-      const bcrypt = require('bcrypt');
-      const hashedPassword = await bcrypt.hash(password, 10);
-      user.password = hashedPassword;
-    }
-
-    if (role) {
-      user.role = role;
-    }
+    if (name) user.name = name;
+    if (email) user.email = email;
+    if (password) user.password = await bcrypt.hash(password, 10);
+    if (role) user.role = role;
 
     await user.save();
-
     res.status(200).json({ message: 'User berhasil diperbarui', data: user });
   } catch (error) {
-    res.status(500).json({ message: 'Gagal memperbarui user', error });
+    res.status(500).json({ message: 'Gagal memperbarui user', error: error.message });
   }
 };
 
-
-// ✅ DELETE user
+// 🔹 DELETE user
 const deleteUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
@@ -201,45 +215,35 @@ const deleteUser = async (req, res) => {
     }
 
     await user.destroy();
-
     res.status(200).json({ message: 'User berhasil dihapus' });
   } catch (error) {
-    res.status(500).json({ message: 'Gagal menghapus user', error });
+    res.status(500).json({ message: 'Gagal menghapus user', error: error.message });
   }
 };
 
-const generateCustomId = async (role) => {
-  const prefixMap = {
-    superadmin: 'ADM',
-    penjual: 'SEL',
-    pembeli: 'BUY',
-    driver: 'DRV'
-  };
-
-  const prefix = prefixMap[role] || 'USR';
-  const count = await User.count({ where: { role } });
-  const customId = `${prefix}${String(count + 1).padStart(4, '0')}`;
-  return customId;
-};
-
+// 🔹 GET by customId
 const getUserByCustomId = async (req, res) => {
   try {
     const { customId } = req.params;
+    const user = await User.findOne({
+      where: { customId },
+      attributes: { exclude: ['password'] }
+    });
 
-    const user = await User.findOne({ where: { customId } });
-    if (!user) return res.status(404).json({ message: 'User tidak ditemukan' });
+    if (!user) {
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    }
 
     res.status(200).json({ data: user });
   } catch (error) {
-    res.status(500).json({ message: 'Gagal mengambil user', error: error.message });
+    res.status(500).json({ message: "Gagal mengambil user", error: error.message });
   }
 };
 
+// 🔹 LOGOUT
 const logoutUser = async (req, res) => {
-  
   res.status(200).json({ message: 'Logout berhasil.' });
 };
-
 
 module.exports = {
   createUser,
