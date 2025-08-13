@@ -56,7 +56,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* route admin */}
-        <Route path="/" element={<DashboardAdmin />} />
+        <Route path="/admin/dashboard" element={<DashboardAdmin />} />
         <Route path="/products" element={<PageProducts />} />
         <Route path="/stores" element={<PageStores />} />
         <Route path="/payments" element={<PagePayments />} />

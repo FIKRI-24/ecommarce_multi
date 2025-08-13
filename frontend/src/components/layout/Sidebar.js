@@ -24,6 +24,21 @@ const Sidebar = () => {
     // Arahkan ke halaman login
     navigate("/login");
   };
+  // Buat path dashboard sesuai role
+  const getDashboardPath = () => {
+    switch (role) {
+      case "superadmin":
+        return "/admin/dashboard";
+      case "penjual":
+        return "/seller/store";
+      case "pembeli":
+        return "/buyer/home";
+      case "driver":
+        return "/driver/dashboard";
+      default:
+        return "/dashboard";
+    }
+  };
 
   return (
     <div className="sidebar">
@@ -34,7 +49,7 @@ const Sidebar = () => {
         {/* Dashboard selalu muncul */}
         <li>
           <i className="fas fa-tachometer-alt"></i>
-          <Link to="/dashboard">Dashboard</Link>
+          <Link to={getDashboardPath()}>Dashboard</Link>
         </li>
 
         {/* Menu untuk penjual */}

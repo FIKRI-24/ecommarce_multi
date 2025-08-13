@@ -83,7 +83,7 @@ const CreateProduct = () => {
 
       setSuccess(response.data.message || "Produk berhasil ditambahkan!");
       setTimeout(() => {
-        navigate("/my-products");
+        navigate("/seller/my-products");
       }, 1500);
     } catch (err) {
       console.error("❌ Gagal tambah produk:", err);
@@ -237,7 +237,7 @@ const CreateProduct = () => {
                 </button>
               </div>
               <div className="control">
-                <Link to="/my-products" className="button is-light">
+                <Link to="/seller/my-products" className="button is-light">
                   Batal
                 </Link>
               </div>

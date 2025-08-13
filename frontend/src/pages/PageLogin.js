@@ -44,7 +44,7 @@ const PageLogin = () => {
         // Role-based redirect
         let redirectPath = "/";
         switch (data.user.role) {
-          case "admin":
+          case "superadmin":
             redirectPath = "/admin/dashboard"; // Halaman dashboard admin
             break;
           case "penjual":
@@ -52,6 +52,9 @@ const PageLogin = () => {
             break;
           case "pembeli":
             redirectPath = "/buyer/home"; // Halaman dashboard pembeli
+            break;
+          case "driver":
+            redirectPath = "/driver/dashboard"; // Halaman dashboard pembeli
             break;
           default:
             redirectPath = "/"; // Default fallback
