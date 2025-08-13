@@ -1,11 +1,11 @@
-// src/pages/seller/Orders.js
+// src/pages/buyer/Orders.js
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/layout/Sidebar";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../../assets/css/style.css";
 
-const Orders = () => {
+const BuyerOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -21,7 +21,7 @@ const Orders = () => {
         }
 
         const response = await axios.get(
-          "http://localhost:5500/seller/orders", // Sesuaikan endpoint jika berbeda
+          "http://localhost:5500/buyer/orders", // Sesuaikan jika path berbeda
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -29,7 +29,6 @@ const Orders = () => {
           }
         );
 
-        // Simpan data orders
         setOrders(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
         console.error("❌ Gagal muat daftar pesanan:", err);
@@ -49,16 +48,37 @@ const Orders = () => {
     fetchOrders();
   }, [navigate]);
 
+  const handleDelete = async (orderId) => {
+    if (!window.confirm("Yakin ingin membatalkan pesanan ini?")) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`http://localhost:5500/buyer/orders/${orderId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setOrders(orders.filter((order) => order.id !== orderId));
+      alert("Pesanan berhasil dibatalkan.");
+    } catch (err) {
+      console.error("❌ Gagal hapus pesanan:", err);
+      alert(
+        err.response?.data?.message || "Gagal membatalkan pesanan. Coba lagi."
+      );
+    }
+  };
+
   const getStatusBadgeColor = (status) => {
     switch (status.toLowerCase()) {
       case "diterima":
         return "is-success";
-      case "dalam perjalanan":
-        return "is-warning";
-      case "dibatalkan":
-        return "is-danger";
       case "pending":
         return "is-info";
+      case "dibatalkan":
+        return "is-danger";
+      case "dalam perjalanan":
+        return "is-warning";
       default:
         return "is-light";
     }
@@ -82,8 +102,8 @@ const Orders = () => {
       <div className="content">
         {/* Header */}
         <div className="content-header">
-          <h1 className="title is-3 has-text-dark">Orderan Masuk</h1>
-          <p>Manage dan pantau pesanan dari pembeli.</p>
+          <h1 className="title is-3 has-text-dark">Pesanan Saya</h1>
+          <p>Lihat dan kelola pesanan yang telah kamu buat.</p>
         </div>
 
         {/* Error Message */}
@@ -97,7 +117,7 @@ const Orders = () => {
         {/* Daftar Pesanan */}
         {orders.length === 0 ? (
           <div className="has-text-centered py-6">
-            <p className="has-text-grey">Tidak ada pesanan saat ini.</p>
+            <p className="has-text-grey">Kamu belum memiliki pesanan.</p>
           </div>
         ) : (
           <div className="box">
@@ -105,10 +125,10 @@ const Orders = () => {
               <thead>
                 <tr>
                   <th>ID Pesanan</th>
-                  <th>Pembeli</th>
-                  <th>ID Pembeli</th>
+                  <th>Total</th>
                   <th>Status</th>
                   <th>Tanggal</th>
+                  <th>Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -117,9 +137,10 @@ const Orders = () => {
                     <td>
                       <strong>#{order.id}</strong>
                     </td>
-                    <td>{order.User?.name || "Pembeli Tidak Dikenal"}</td>
                     <td>
-                      <code>{order.User?.customId || "-"}</code>
+                      <strong>
+                        Rp {Number(order.totalAmount || 0).toLocaleString()}
+                      </strong>
                     </td>
                     <td>
                       <span
@@ -137,6 +158,30 @@ const Orders = () => {
                         minute: "2-digit",
                       })}
                     </td>
+                    <td>
+                      <div className="buttons are-small">
+                        <button
+                          className="button is-info"
+                          onClick={() => navigate(`/orders/${order.id}`)}
+                        >
+                          <span className="icon is-small">
+                            <i className="fas fa-eye"></i>
+                          </span>
+                          <span>Detail</span>
+                        </button>
+                        {order.status === "pending" && (
+                          <button
+                            className="button is-danger"
+                            onClick={() => handleDelete(order.id)}
+                          >
+                            <span className="icon is-small">
+                              <i className="fas fa-trash"></i>
+                            </span>
+                            <span>Batalkan</span>
+                          </button>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -148,4 +193,4 @@ const Orders = () => {
   );
 };
 
-export default Orders;
+export default BuyerOrders;

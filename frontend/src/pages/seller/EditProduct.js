@@ -9,13 +9,12 @@ const EditProduct = () => {
   const { id } = useParams(); // Ambil id dari URL
   const navigate = useNavigate();
 
+  // ✅ HAPUS image dan status dari formData
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     stock: "",
-    image: "",
-    status: "active",
   });
 
   const [errors, setErrors] = useState({});
@@ -27,6 +26,9 @@ const EditProduct = () => {
   // Ambil data produk saat pertama kali
   useEffect(() => {
     const fetchProduct = async () => {
+      setFetchLoading(true);
+      setApiError("");
+
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
@@ -38,16 +40,19 @@ const EditProduct = () => {
           }
         );
 
-        const product = response.data;
+        // ✅ Gunakan response.data langsung atau response.data.data
+        const product = response.data.data || response.data;
 
-        // Isi form dengan data produk
+        if (!product) {
+          throw new Error("Data produk tidak ditemukan");
+        }
+
+        // ✅ Isi form tanpa image dan status
         setFormData({
           name: product.name || "",
           description: product.description || "",
           price: product.price || "",
           stock: product.stock || "",
-          image: product.image || "",
-          status: product.status || "active",
         });
       } catch (err) {
         console.error("❌ Gagal muat data produk:", err);
@@ -59,7 +64,12 @@ const EditProduct = () => {
       }
     };
 
-    fetchProduct();
+    if (id) {
+      fetchProduct();
+    } else {
+      setApiError("ID produk tidak valid.");
+      setFetchLoading(false);
+    }
   }, [id]);
 
   const handleChange = (e) => {
@@ -87,7 +97,6 @@ const EditProduct = () => {
       newErrors.price = "Harga harus lebih dari 0";
     if (!formData.stock || formData.stock < 0)
       newErrors.stock = "Stok tidak boleh negatif";
-    if (!formData.image.trim()) newErrors.image = "Gambar (URL) wajib diisi";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -104,10 +113,14 @@ const EditProduct = () => {
 
     try {
       const token = localStorage.getItem("token");
+
+      // ✅ HAPUS image dan status dari payload
       const payload = {
-        ...formData,
+        name: formData.name,
+        description: formData.description,
         price: Number(formData.price),
         stock: Number(formData.stock),
+        // ❌ Jangan kirim image dan status
       };
 
       await axios.put(`http://localhost:5500/seller/products/${id}`, payload, {
@@ -236,41 +249,8 @@ const EditProduct = () => {
               {errors.stock && <p className="help is-danger">{errors.stock}</p>}
             </div>
 
-            {/* Gambar (URL) */}
-            <div className="field">
-              <label className="label">Gambar (URL)</label>
-              <div className="control">
-                <input
-                  type="url"
-                  className={`input ${errors.image ? "is-danger" : ""}`}
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  placeholder="https://example.com/gambar.jpg"
-                />
-              </div>
-              {errors.image && <p className="help is-danger">{errors.image}</p>}
-              <p className="help">
-                Masukkan URL gambar produk (harus di-host di internet).
-              </p>
-            </div>
-
-            {/* Status */}
-            <div className="field">
-              <label className="label">Status</label>
-              <div className="control">
-                <div className="select">
-                  <select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                  >
-                    <option value="active">Aktif</option>
-                    <option value="inactive">Nonaktif</option>
-                  </select>
-                </div>
-              </div>
-            </div>
+            {/* HAPUS field Gambar (URL) dan Status */}
+            {/* Tidak ditampilkan karena tidak ada di database */}
 
             {/* Aksi */}
             <div className="field is-grouped mt-5">

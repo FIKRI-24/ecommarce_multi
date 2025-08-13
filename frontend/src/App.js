@@ -49,8 +49,13 @@ import OrderDetail from "./pages/seller/OrderDetail";
 
 // drivers
 import DashboardDriver from "./pages/driver/DashboardDriver";
+
+// buyer orders
+import BuyerOrders from "./pages/buyer/BuyerOrders";
+import BuyerOrderDetail from "./pages/buyer/BuyerOrderDetail";
 // cart
 import PageCart from "./pages/PageCart";
+
 function App() {
   return (
     <BrowserRouter>
@@ -103,7 +108,9 @@ function App() {
         {/* drivers route */}
         <Route path="/driver/dashboard" element={<DashboardDriver />} />
 
-        {/* Cart */}
+        {/* Buyer Order Detail */}
+        <Route path="/buyer/orders" element={<BuyerOrders />} />
+        <Route path="/buyer/orders/:id" element={<BuyerOrderDetail />} />
         <Route path="/buyer/home" element={<PageCart />} />
       </Routes>
     </BrowserRouter>
