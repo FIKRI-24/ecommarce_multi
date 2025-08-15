@@ -8,6 +8,8 @@ import { ThemeProvider } from "./context/ThemeContext";
 // Import semua komponen Anda (sudah ada)
 import DashboardAdmin from "./pages/DashboardAdmin";
 
+// pages
+import PageProfile from "./PageProfile";
 // products
 import PageProducts from "./pages/PageProducts";
 import PageProductDetail from "./components/product/PageProductDetail";
@@ -82,6 +84,7 @@ function App() {
           <Route path="/admin/products" element={<PageProducts />} />
           <Route path="/admin/stores" element={<PageStores />} />
           <Route path="/admin/payments" element={<PagePayments />} />
+          <Route path="/admin/profile" element={<PageProfile />} />
 
           {/* Products */}
           <Route path="/product/:id" element={<PageProductDetail />} />
