@@ -33,7 +33,7 @@ const PageEditStore = () => {
     } catch (error) {
       console.error("Gagal muat toko:", error);
       alert("Gagal memuat data toko.");
-      navigate("/stores");
+      navigate("/admin/stores");
     } finally {
       setLoading(false);
     }
@@ -50,7 +50,7 @@ const PageEditStore = () => {
     try {
       await axios.put(`http://localhost:5500/admin/stores/${id}`, formData);
       alert("Toko berhasil diperbarui!");
-      navigate("/stores");
+      navigate("/admin/stores");
     } catch (error) {
       console.error("Gagal edit toko:", error);
       alert("Gagal memperbarui toko.");
@@ -69,7 +69,7 @@ const PageEditStore = () => {
         style={{ backgroundColor: "#f8f9fa", padding: "30px" }}
       >
         <Link
-          to="/stores"
+          to="/admin/stores"
           className="button is-small is-light"
           style={{ marginBottom: "10px" }}
         >
@@ -146,7 +146,7 @@ const PageEditStore = () => {
             >
               {loading ? "Menyimpan..." : "💾 Simpan Perubahan"}
             </button>
-            <Link to="/stores" className="button is-light">
+            <Link to="/admin/stores" className="button is-light">
               Batal
             </Link>
           </div>

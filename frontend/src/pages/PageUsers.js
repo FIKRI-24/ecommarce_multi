@@ -91,7 +91,7 @@ const PageUsers = () => {
 
         {/* Tombol Tambah */}
         <div style={{ textAlign: "right", marginBottom: "20px" }}>
-          <Link to="/add-user">
+          <Link to="/admin/add-user">
             <button className="button is-link">➕ Tambah Pengguna</button>
           </Link>
         </div>
@@ -129,12 +129,12 @@ const PageUsers = () => {
                       <td>{getStatusBadge(user)}</td>
                       <td>
                         <div className="buttons are-small">
-                          <Link to={`/user/${user.id}`}>
+                          <Link to={`/admin/user/${user.id}`}>
                             <button className="button is-light">
                               👁️ Lihat
                             </button>
                           </Link>
-                          <Link to={`/edit-user/${user.id}`}>
+                          <Link to={`/admin/edit-user/${user.id}`}>
                             <button className="button is-info is-light">
                               ✏️ Edit
                             </button>

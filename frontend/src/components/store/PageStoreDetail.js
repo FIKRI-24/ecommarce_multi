@@ -74,7 +74,7 @@ const PageStoreDetail = () => {
       >
         {/* Header */}
         <Link
-          to="/stores"
+          to="/admin/stores"
           className="button is-small is-light"
           style={{ marginBottom: "10px" }}
         >
@@ -129,7 +129,7 @@ const PageStoreDetail = () => {
           <div className="is-flex is-justify-content-space-between is-align-items-center mb-4">
             <h2 className="title is-5">📦 Produk di Toko Ini</h2>
             <Link
-              to={`/add-product?storeId=${store.id}`}
+              to={`/admin/add-product?storeId=${store.id}`}
               className="button is-link"
             >
               ➕ Tambah Produk
@@ -161,7 +161,7 @@ const PageStoreDetail = () => {
                       <td>{product.stock}</td>
                       <td>
                         <div className="buttons are-small">
-                          <Link to={`/edit-products/${product.id}`}>
+                          <Link to={`/admin/edit-products/${product.id}`}>
                             <button className="button is-info">✏️ Edit</button>
                           </Link>
                         </div>
@@ -178,10 +178,13 @@ const PageStoreDetail = () => {
 
         {/* Aksi */}
         <div className="buttons mt-5">
-          <Link to={`/edit-store/${store.id}`} className="button is-warning">
+          <Link
+            to={`/admin/edit-stores/${store.id}`}
+            className="button is-warning"
+          >
             🛠️ Edit Toko
           </Link>
-          <Link to="/stores" className="button is-light">
+          <Link to="/admin/stores" className="button is-light">
             Kembali
           </Link>
         </div>

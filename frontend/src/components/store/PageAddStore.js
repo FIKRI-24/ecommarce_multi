@@ -95,7 +95,7 @@ const PageAddStore = () => {
         style={{ backgroundColor: "#f8f9fa", padding: "30px" }}
       >
         <Link
-          to="/stores"
+          to="/admin/stores"
           className="button is-small is-light"
           style={{ marginBottom: "10px" }}
         >
@@ -194,7 +194,7 @@ const PageAddStore = () => {
             >
               {formLoading ? "Membuat..." : "✅ Buat Toko"}
             </button>
-            <Link to="/stores" className="button is-light">
+            <Link to="/admin/stores" className="button is-light">
               Batal
             </Link>
           </div>

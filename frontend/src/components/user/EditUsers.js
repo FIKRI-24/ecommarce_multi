@@ -67,7 +67,7 @@ const EditUser = () => {
       });
 
       alert("User berhasil diperbarui!");
-      navigate("/users");
+      navigate("/admin/users");
     } catch (error) {
       console.error("Gagal memperbarui user:", error);
 
@@ -106,7 +106,7 @@ const EditUser = () => {
       >
         {/* Header */}
         <div style={{ marginBottom: "30px" }}>
-          <Link to="/users">
+          <Link to="/admin/users">
             <button className="button is-warning mb-4">⬅️ Kembali</button>
           </Link>
           <h1 className="title is-3 has-text-dark">
@@ -195,7 +195,7 @@ const EditUser = () => {
           {/* Submit Button */}
           <div className="field is-grouped is-grouped-right mt-5">
             <div className="control">
-              <Link to="/users">
+              <Link to="/admin/users">
                 <button type="button" className="button is-light mr-2">
                   Batal
                 </button>

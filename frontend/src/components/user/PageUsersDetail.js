@@ -71,7 +71,7 @@ const PageUserDetail = () => {
           <div className="notification is-danger">
             Pengguna tidak ditemukan.
           </div>
-          <Link to="/users">
+          <Link to="/admin/users">
             <button className="button is-light">
               ‹ Kembali ke Daftar Pengguna
             </button>
@@ -91,7 +91,7 @@ const PageUserDetail = () => {
       >
         {/* Header */}
         <div style={{ marginBottom: "30px" }}>
-          <Link to="/users">
+          <Link to="/admin/users">
             <button
               className="button is-small is-light"
               style={{ marginBottom: "10px" }}
@@ -198,10 +198,10 @@ const PageUserDetail = () => {
 
               {/* Aksi */}
               <div className="buttons" style={{ marginTop: "20px" }}>
-                <Link to={`/edit-user/${user.id}`}>
+                <Link to={`/admin/edit-user/${user.id}`}>
                   <button className="button is-info">✏️ Edit Profil</button>
                 </Link>
-                <Link to="/users">
+                <Link to="/admin/users">
                   <button className="button is-light">Kembali</button>
                 </Link>
               </div>

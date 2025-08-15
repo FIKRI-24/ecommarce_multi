@@ -1,7 +1,12 @@
-import DashboardAdmin from "./pages/DashboardAdmin";
+// src/App.js
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
+
+// Import ThemeProvider untuk Dark Mode
+import { ThemeProvider } from "./context/ThemeContext";
+
+// Import semua komponen Anda (sudah ada)
+import DashboardAdmin from "./pages/DashboardAdmin";
 
 // products
 import PageProducts from "./pages/PageProducts";
@@ -33,8 +38,8 @@ import PageUserDetail from "./components/user/PageUsersDetail";
 // landing pages
 import LandingPage from "./components/landingpage/LandingPage";
 import LandingPageProducts from "./pages/landingpage/LandingPageProducts";
-// import LandingPageCart from "./pages/landingpage/LandingPageCart";
 
+// auth
 import PageLogin from "./pages/PageLogin";
 import PageRegister from "./pages/PageRegister";
 
@@ -47,73 +52,89 @@ import EditProduct from "./pages/seller/EditProduct";
 import MyOrders from "./pages/seller/MyOrders";
 import OrderDetail from "./pages/seller/OrderDetail";
 
-// drivers
+// driver
 import DashboardDriver from "./pages/driver/DashboardDriver";
 
-// buyer orders
+// buyer
 import BuyerOrders from "./pages/buyer/BuyerOrders";
 import BuyerOrderDetail from "./pages/buyer/BuyerOrderDetail";
-// cart
 import PageCart from "./pages/PageCart";
+import ProductList from "./pages/buyer/ProductList";
+import BuyerProfile from "./pages/buyer/BuyerProfile";
+import Checkout from "./pages/buyer/Checkout";
+
+// CSS
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* route admin */}
-        <Route path="/admin/dashboard" element={<DashboardAdmin />} />
-        <Route path="/products" element={<PageProducts />} />
-        <Route path="/stores" element={<PageStores />} />
-        <Route path="/payments" element={<PagePayments />} />
+    <ThemeProvider>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+          v7_relativeSplatPath: true,
+        }}
+      >
+        <Routes>
+          {/* ============== ADMIN ROUTES ============== */}
+          <Route path="/admin/dashboard" element={<DashboardAdmin />} />
+          <Route path="/admin/products" element={<PageProducts />} />
+          <Route path="/admin/stores" element={<PageStores />} />
+          <Route path="/admin/payments" element={<PagePayments />} />
 
-        {/* Products */}
-        <Route path="/product/:id" element={<PageProductDetail />} />
-        <Route path="/edit-Product/:id" element={<EditProducts />} />
-        <Route path="/add-Product" element={<AddProducts />} />
+          {/* Products */}
+          <Route path="/product/:id" element={<PageProductDetail />} />
+          <Route path="/edit-Product/:id" element={<EditProducts />} />
+          <Route path="/admin/add-Product" element={<AddProducts />} />
 
-        {/* Stores */}
-        <Route path="/add-stores" element={<PageAddStore />} />
-        <Route path="/edit-stores/:id" element={<PageEditStore />} />
-        <Route path="/stores/:id" element={<PageStoreDetail />} />
+          {/* Stores */}
+          <Route path="/admin/add-stores" element={<PageAddStore />} />
+          <Route path="/admin/edit-stores/:id" element={<PageEditStore />} />
+          <Route path="/admin/stores/:id" element={<PageStoreDetail />} />
 
-        {/* Orders */}
-        <Route path="/orders" element={<PageOrders />} />
+          {/* Orders */}
+          <Route path="/orders" element={<PageOrders />} />
 
-        {/* Users */}
-        <Route path="/users" element={<PageUsers />} />
-        <Route path="/user/:id" element={<PageUserDetail />} />
-        <Route path="/add-user" element={<AddUsers />} />
-        <Route path="/edit-user/:id" element={<EditUser />} />
+          {/* Users */}
+          <Route path="/admin/users" element={<PageUsers />} />
+          <Route path="/admin/user/:id" element={<PageUserDetail />} />
+          <Route path="/admin/add-user" element={<AddUsers />} />
+          <Route path="/admin/edit-user/:id" element={<EditUser />} />
 
-        {/* Landing Pages */}
-        <Route path="/landing-page" element={<LandingPage />} />
-        <Route path="/landing-products" element={<LandingPageProducts />} />
-        {/* <Route path="/landing-cart" element={<LandingPageCart />} /> */}
+          {/* ============== LANDING PAGES ============== */}
+          <Route path="/landing-page" element={<LandingPage />} />
+          <Route path="/landing-products" element={<LandingPageProducts />} />
 
-        {/* Login Page */}
-        <Route path="/login" element={<PageLogin />} />
-        <Route path="/register" element={<PageRegister />} />
+          {/* ============== AUTH PAGES ============== */}
+          <Route path="/login" element={<PageLogin />} />
+          <Route path="/register" element={<PageRegister />} />
 
-        {/* Seller route */}
-        <Route path="/seller/store" element={<DashboardSeller />} />
-        <Route path="/seller/my-products" element={<MyProducts />} />
-        <Route path="/seller/products/create" element={<CreateProduct />} />
-        <Route path="/seller/products/edit/:id" element={<EditProduct />} />
+          {/* ============== SELLER ROUTES ============== */}
+          <Route path="/seller/store" element={<DashboardSeller />} />
+          <Route path="/seller/my-products" element={<MyProducts />} />
+          <Route path="/seller/products/create" element={<CreateProduct />} />
+          <Route path="/seller/products/edit/:id" element={<EditProduct />} />
+          <Route path="/seller/my-orders" element={<MyOrders />} />
+          <Route path="/seller/orders/:id" element={<OrderDetail />} />
 
-        {/* Seller Orders */}
-        <Route path="/seller/my-orders" element={<MyOrders />} />
-        <Route path="/seller/orders/:id" element={<OrderDetail />} />
-        {/* <Route path="/seller/products/:id" element={<PageProductDetail />} />  */}
+          {/* ============== DRIVER ROUTES ============== */}
+          <Route path="/driver/dashboard" element={<DashboardDriver />} />
 
-        {/* drivers route */}
-        <Route path="/driver/dashboard" element={<DashboardDriver />} />
+          {/* ============== BUYER ROUTES ============== */}
+          <Route path="/buyer/orders" element={<BuyerOrders />} />
+          <Route path="/buyer/orders/:id" element={<BuyerOrderDetail />} />
+          <Route path="/buyer/home" element={<PageCart />} />
+          {/* ✅ Perbaikan: Tambahkan `/` di awal */}
+          <Route path="/buyer/profile" element={<BuyerProfile />} />
+          <Route path="/buyer/products" element={<ProductList />} />
+          <Route path="/buyer/checkout" element={<Checkout />} />
 
-        {/* Buyer Order Detail */}
-        <Route path="/buyer/orders" element={<BuyerOrders />} />
-        <Route path="/buyer/orders/:id" element={<BuyerOrderDetail />} />
-        <Route path="/buyer/home" element={<PageCart />} />
-      </Routes>
-    </BrowserRouter>
+          {/* ============== DEFAULT / FALLBACK ============== */}
+          {/* Anda bisa tambahkan route untuk / */}
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 

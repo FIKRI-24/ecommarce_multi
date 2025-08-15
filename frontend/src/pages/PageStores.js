@@ -83,7 +83,7 @@ const PageStores = () => {
 
         {/* Tombol Tambah */}
         <div style={{ textAlign: "right", marginBottom: "20px" }}>
-          <Link to="/add-stores">
+          <Link to="/admin/add-stores">
             <button className="button is-link">➕ Tambah Toko</button>
           </Link>
         </div>
@@ -176,12 +176,12 @@ const PageStores = () => {
                     </td>
                     <td>
                       <div className="buttons are-small">
-                        <Link to={`/stores/${store.id}`}>
+                        <Link to={`/admin/stores/${store.id}`}>
                           <button className="button is-light">
                             👁️ Lihat Detail
                           </button>
                         </Link>
-                        <Link to={`/edit-stores/${store.id}`}>
+                        <Link to={`/admin/edit-stores/${store.id}`}>
                           <button className="button is-info is-light">
                             ✏️ Edit
                           </button>

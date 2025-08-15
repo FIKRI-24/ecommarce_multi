@@ -230,3 +230,82 @@ p {
     transform: translateY(0);
   }
 }
+/* ============ */
+/* dark mode */
+/* Light Mode (default) */
+body.light-mode {
+  background-color: #f5f5f5;
+  color: #000000;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Dark Mode */
+body.dark-mode {
+  background-color: #000000;
+  color: #ffffff;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode .box,
+body.dark-mode .content,
+body.dark-mode .menu,
+body.dark-mode table,
+body.dark-mode .table th,
+body.dark-mode .table td,
+body.dark-mode .notification {
+  background-color: #1e1e1e !important;
+  color: #e0e0e0;
+  border-color: #333;
+}
+
+body.dark-mode .menu {
+  background-color: #1a1a1a !important;
+  border-right-color: #333;
+}
+
+body.dark-mode .menu a,
+body.dark-mode .menu span,
+body.dark-mode .menu p,
+body.dark-mode .menu strong {
+  color: #e0e0e0 !important;
+}
+
+body.dark-mode .button {
+  border: 1px solid #444;
+}
+
+body.dark-mode .table th {
+  background-color: #2d2d2d !important;
+  color: #fff;
+}
+
+body.dark-mode .card,
+body.dark-mode .stat-card {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #333;
+}
+
+body.dark-mode .label,
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: #e0e0e0;
+}
+
+/* Input & Form */
+body.dark-mode .input,
+body.dark-mode .textarea,
+body.dark-mode .select select {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+  border-color: #555 !important;
+}
+
+body.dark-mode .tag {
+  background-color: #333;
+  color: #fff;
+}
